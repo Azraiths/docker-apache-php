@@ -3,6 +3,7 @@ MAINTAINER Zaurbek Sundukov <azraiths@gmail.com>
 
 VOLUME ["/var/www"]
 
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 ENV OS_LOCALE="en_US.UTF-8"
 RUN apt-get update && apt-get install -y locales && locale-gen ${OS_LOCALE}
 ENV LANG=${OS_LOCALE} \
