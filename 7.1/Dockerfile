@@ -1,5 +1,7 @@
-FROM ubuntu:xenial
-MAINTAINER romeOz <serggalka@gmail.com>
+FROM ubuntu:bionic
+MAINTAINER Zaurbek Sundukov <azraiths@gmail.com>
+
+VOLUME ["/var/www"]
 
 ENV OS_LOCALE="en_US.UTF-8"
 RUN apt-get update && apt-get install -y locales && locale-gen ${OS_LOCALE}
@@ -16,19 +18,17 @@ COPY ./app /var/www/app/
 COPY entrypoint.sh /sbin/entrypoint.sh
 
 RUN	\
-	BUILD_DEPS='software-properties-common python-software-properties' \
+	BUILD_DEPS='software-properties-common' \
     && dpkg-reconfigure locales \
 	&& apt-get install --no-install-recommends -y $BUILD_DEPS \
 	&& add-apt-repository -y ppa:ondrej/php \
 	&& add-apt-repository -y ppa:ondrej/apache2 \
 	&& apt-get update \
-    && apt-get install -y curl apache2 libapache2-mod-php7.1 php7.1-cli php7.1-readline php7.1-mbstring php7.1-zip php7.1-intl php7.1-xml php7.1-json php7.1-curl php7.1-mcrypt php7.1-gd php7.1-pgsql php7.1-mysql php-pear \
+    && apt-get install -y curl apache2 libapache2-mod-php7.1 php7.1-cli php7.1-readline php7.1-mbstring php7.1-zip php7.1-intl php7.1-xml php7.1-json php7.1-curl php7.1-gd php7.1-pgsql php7.1-mysql php-pear php7.1-soap \
     # Apache settings
     && cp /dev/null ${APACHE_CONF_DIR}/conf-available/other-vhosts-access-log.conf \
     && rm ${APACHE_CONF_DIR}/sites-enabled/000-default.conf ${APACHE_CONF_DIR}/sites-available/000-default.conf \
     && a2enmod rewrite php7.1 \
-    # PHP settings
-	&& phpenmod mcrypt \
 	# Install composer
 	&& curl -sS https://getcomposer.org/installer | php -- --version=1.8.4 --install-dir=/usr/local/bin --filename=composer \
 	# Cleaning
